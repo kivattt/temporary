@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 )
 
 func main() {
 	w, _ := fsnotify.NewWatcher()
-	defer w.Close()
 
 	go func() {
 		defer fmt.Println("Channel handler quit!")
@@ -20,6 +20,7 @@ func main() {
 				}
 			case _, ok := <-w.Errors:
 				if !ok {
+					fmt.Println("error channel closed!")
 					return
 				}
 			}
@@ -31,4 +32,11 @@ func main() {
 	fmt.Println("Removing .")
 	w.Remove(".")
 	fmt.Println("Done!")
+
+	w.Add(".")
+	w.Remove(".")
+
+	w.Close()
+
+	time.Sleep(800 * time.Millisecond)
 }
